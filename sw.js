@@ -1,58 +1,74 @@
-// Get UID from URL query string
-function getUid() {
-  try {
-    const urlParams = new URL(self.location.href).searchParams;
-    return urlParams.get('uid') || 'default';
-  } catch (e) {
-    return 'default';
-  }
+/* ===================== UID FROM SCOPE ===================== */
+/*
+  SW scope example:
+  https://myapp.masomo.website/app/23406633/
+*/
+function getUidFromScope() {
+  const scope = self.registration.scope;
+  const match = scope.match(/\/app\/([^/]+)\//);
+  return match ? match[1] : 'default';
 }
 
-const UID = getUid();
-const CACHE_NAME = `myshop-cache-${UID}-v1`; // UID-specific cache
+const UID = getUidFromScope();
+const CACHE_NAME = `myshop-cache-${UID}-v1`;
 
+/* ===================== FILES TO CACHE ===================== */
 const urlsToCache = [
-  './',
-  './index.html',
-  './icon-192x192.png',
-  './icon-512x512.png',
-  // no static manifest, each PWA gets dynamic manifest via Netlify function
+  `/app/${UID}/`,
+  `/app/${UID}/index.html`,
+  `/icon-192x192.png`,
+  `/icon-512x512.png`
 ];
 
-/* ---------------------- INSTALL ---------------------- */
+/* ===================== INSTALL ===================== */
 self.addEventListener('install', (event) => {
   self.skipWaiting();
+
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Caching files for UID:', UID);
+      console.log('[SW] Installing cache for UID:', UID);
       return cache.addAll(urlsToCache);
     })
   );
 });
 
-/* ---------------------- ACTIVATE ---------------------- */
+/* ===================== ACTIVATE ===================== */
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((names) =>
+    caches.keys().then((cacheNames) =>
       Promise.all(
-        names.map((name) => {
-          if (name !== CACHE_NAME) {
-            console.log('[SW] Deleting old cache:', name);
-            return caches.delete(name);
+        cacheNames.map((cache) => {
+          // 🚫 DO NOT delete other UID caches
+          if (!cache.startsWith(`myshop-cache-${UID}-`)) {
+            return Promise.resolve();
           }
         })
       )
     )
   );
-  clients.claim();
+
+  self.clients.claim();
 });
 
-/* ---------------------- FETCH ---------------------- */
+/* ===================== FETCH ===================== */
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+
+  // Only handle requests within this UID scope
+  if (!url.pathname.startsWith(`/app/${UID}/`)) {
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((cacheResponse) => {
-      return cacheResponse || fetch(event.request);
+    caches.match(event.request).then((cached) => {
+      return (
+        cached ||
+        fetch(event.request).then((response) => {
+          return response;
+        })
+      );
     })
   );
 });
+
 

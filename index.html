@@ -7,33 +7,25 @@
 
   <!-- DYNAMIC MANIFEST -->
   <script>
-    // Get UID from query string or URL path
-    function getUid() {
-      const urlParams = new URLSearchParams(window.location.search);
-      let uid = urlParams.get('uid');
+    // Get UID from query string or /app/UID path
+    let urlParams = new URLSearchParams(window.location.search);
+    let uid = urlParams.get('uid') || localStorage.getItem('uid');
 
-      if (!uid) {
-        // Extract UID from /app/UID/ path
-        const pathMatch = window.location.pathname.match(/\/app\/(\d+)\//);
-        if (pathMatch) uid = pathMatch[1];
-      }
-
-      // Fallback to last stored UID
-      if (!uid) uid = localStorage.getItem('uid');
-
-      if (uid) localStorage.setItem('uid', uid);
-      return uid;
+    // Check /app/UID path if not in query string or localStorage
+    if (!uid) {
+      const pathMatch = window.location.pathname.match(/\/app\/(\d+)\/?$/);
+      if (pathMatch) uid = pathMatch[1];
     }
 
-    const uid = getUid();
-
     if (uid) {
+      localStorage.setItem('uid', uid);
       const link = document.createElement('link');
       link.rel = 'manifest';
-      link.href = '/.netlify/functions/manifest?uid=' + uid + '&v=' + uid; // versioned for cache
+      // POINT TO NETLIFY FUNCTION SERVING DYNAMIC MANIFEST
+      link.href = '/.netlify/functions/manifest?uid=' + uid + '&v=' + uid;
       document.head.appendChild(link);
     } else {
-      // fallback manifest
+      // fallback to default manifest if no UID
       const link = document.createElement('link');
       link.rel = 'manifest';
       link.href = '/manifest.json';
@@ -174,7 +166,7 @@
     if (!uid) {
       contentDiv.innerHTML = "<p>No UID provided. Please open with your shop link.</p>";
     } else {
-      // Store UID in localStorage
+      // Save UID in localStorage (used by SW for cache)
       localStorage.setItem('uid', uid);
 
       const scriptURL = "https://script.google.com/macros/s/AKfycbx73jH0wY8nELaoKRPNvwNuGKdeSrUV9-PVdt_NU4uyLiNvtkWdExU7l6_oThZpD9dj/exec?uid=" + uid + "&json=1";
@@ -182,8 +174,8 @@
       fetch(scriptURL)
         .then(response => response.json())
         .then(data => {
-          if (!data.success || !data.shopInfo) {
-            contentDiv.innerHTML = "<p>Error loading shop info.</p>";
+          if (!data.success) {
+            contentDiv.innerHTML = `<p>${data.message}</p>`;
             return;
           }
 
@@ -221,4 +213,5 @@
   </script>
 </body>
 </html>
+
 

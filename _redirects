@@ -1,3 +1,2 @@
-# Redirect any /app/<uid>/ path to index.html and append UID as query
-/app/:uid/*   /index.html?uid=:uid   200
+/app/:uid/*    /index.html    200
 

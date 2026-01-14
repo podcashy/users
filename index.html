@@ -161,8 +161,8 @@
             <a class="button" href="https://mysite.masomo.website?user=${s.userId}" target="_blank">VISIT MY WEBSITE</a>
             <a class="button shop" href="https://myshops.masomo.website?uid=${s.userId}" target="_blank">VISIT MY ONLINE SHOP</a>
             <div class="details-section">
-              <div class="detail-label">PHONE</div>${s.phone}
-              <div class="detail-label">WHATSAPP</div>${s.whatsapp}
+            <div class="detail-label">PHONE</div>0${s.phone.toString().padStart(8, '0')}
+<div class="detail-label">WHATSAPP</div>0${s.whatsapp.toString().padStart(8, '0')}
               <div class="detail-label">LOCATION</div>${s.location}
               <div class="detail-label">ABOUT</div>${s.description}
             </div>
@@ -172,3 +172,4 @@
   </script>
 </body>
 </html>
+

@@ -1,1 +1,1 @@
-https://:subdomain.myapp.masomo.website/*  /?uid=:subdomain  200!
+/app/:uid/*   /index.html?uid=:uid   200

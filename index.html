@@ -89,7 +89,7 @@
   if (!uid) {
     contentDiv.innerHTML = "<p>No UID provided. Please open with your shop link.</p>";
   } else {
-    const scriptURL = `https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?uid=${uid}&json=1`;
+    const scriptURL = `https://script.google.com/macros/s/AKfycbx73jH0wY8nELaoKRPNvwNuGKdeSrUV9-PVdt_NU4uyLiNvtkWdExU7l6_oThZpD9dj/exec?uid=${uid}&json=1`;
     fetch(scriptURL)
       .then(res => res.json())
       .then(data => {
@@ -115,6 +115,7 @@
 </script>
 </body>
 </html>
+
 
 
 

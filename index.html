@@ -1,207 +1,219 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MyShop PWA</title>
 
-  <!-- DYNAMIC MANIFEST -->
+  <!-- ================= DYNAMIC MANIFEST ================= -->
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const uid = urlParams.get('uid') || localStorage.getItem('uid');
+    const params = new URLSearchParams(window.location.search);
+    const uid = params.get('uid');
 
     if (uid) {
-      localStorage.setItem('uid', uid);
-      const link = document.createElement('link');
-      link.rel = 'manifest';
-      // POINT TO NETLIFY FUNCTION SERVING DYNAMIC MANIFEST
-      link.href = '/.netlify/functions/manifest?uid=' + uid + '&v=' + uid;
-      document.head.appendChild(link);
+      const manifestLink = document.createElement('link');
+      manifestLink.rel = 'manifest';
+      manifestLink.href =
+        '/.netlify/functions/manifest?uid=' + uid + '&v=' + uid;
+      document.head.appendChild(manifestLink);
     } else {
-      // fallback to default manifest if no UID
-      const link = document.createElement('link');
-      link.rel = 'manifest';
-      link.href = '/manifest.json';
-      document.head.appendChild(link);
+      const manifestLink = document.createElement('link');
+      manifestLink.rel = 'manifest';
+      manifestLink.href = '/manifest.json';
+      document.head.appendChild(manifestLink);
     }
   </script>
 
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#000000" />
 
   <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      margin: 0; padding: 0; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: flex-start; 
-      min-height: 100vh; 
-      background: #FFC0CB; 
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: #ffc0cb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    header { 
-      background: #007bff; 
-      color: white; 
-      width: 100%; 
-      padding: 20px; 
-      text-align: center; 
+
+    header {
+      background: #007bff;
+      color: white;
+      width: 100%;
+      padding: 20px;
+      text-align: center;
       position: relative;
     }
+
     #installBtn {
-      position: absolute; 
-      top: 20px; 
-      right: 20px; 
-      padding: 10px 15px; 
-      background: black; 
-      color: white; 
-      border: none; 
-      border-radius: 5px; 
-      cursor: pointer; 
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
       display: none;
     }
-    .container { 
-      padding: 20px; 
-      width: 100%; 
-      max-width: 500px; 
-      text-align: center; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-    }
-    h1 { font-size: 1.5em; margin-bottom: 10px; }
-    .shop-image { max-width: 100%; height: auto; margin: 15px 0; border-radius: 10px; }
 
-    .button { 
-      display: inline-block; 
-      padding: 12px 25px; 
-      font-size: 1em; 
-      text-decoration: none; 
-      color: white; 
-      background-color: #28a745; 
-      border-radius: 25px; 
-      margin: 10px; 
-      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-      transition: transform 0.1s;
+    .container {
+      padding: 20px;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
     }
-    .button:hover { transform: scale(1.05); }
-    .button.shop { background-color: #17a2b8; }
+
+    .shop-image {
+      max-width: 100%;
+      margin: 15px 0;
+      border-radius: 10px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 12px 25px;
+      font-size: 1em;
+      text-decoration: none;
+      color: white;
+      background-color: #28a745;
+      border-radius: 25px;
+      margin: 10px;
+    }
+
+    .button.shop {
+      background-color: #17a2b8;
+    }
 
     .details-section {
-      text-align: center;
       margin-top: 20px;
-      background: #fff;
+      background: white;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      width: 100%;
-    }
-    .details-section h2 { 
-      margin-bottom: 15px; 
-      color: #007bff; 
-    }
-    .detail-label { 
-      font-weight: bold; 
-      margin-top: 10px; 
-      color: green;
-    }
-    .detail-value { 
-      margin-bottom: 10px; 
     }
 
-    .loading { font-size: 1.2em; color: #555; margin-top: 30px; }
+    .detail-label {
+      font-weight: bold;
+      color: green;
+      margin-top: 10px;
+    }
+
+    .loading {
+      font-size: 1.2em;
+      margin-top: 30px;
+    }
   </style>
 </head>
+
 <body>
   <header>
     <h1>MyShop App</h1>
     <button id="installBtn">Install App</button>
   </header>
 
-  <img src="https://i.imgur.com/SIbDh5A.png" alt="MyShop Logo" class="shop-image">
+  <img
+    src="https://i.imgur.com/SIbDh5A.png"
+    alt="MyShop Logo"
+    class="shop-image"
+  />
 
   <div class="container" id="content">
     <p class="loading">Loading shop info...</p>
   </div>
 
   <script>
-    // INSTALL BUTTON LOGIC
+    /* ================= INSTALL BUTTON ================= */
     const installBtn = document.getElementById('installBtn');
     let deferredPrompt;
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
       installBtn.style.display = 'block';
     });
+
     installBtn.addEventListener('click', async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        installBtn.style.display = 'none';
-      }
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBtn.style.display = 'none';
     });
+
     window.addEventListener('appinstalled', () => {
       installBtn.style.display = 'none';
     });
 
-    // SERVICE WORKER REGISTRATION
-    if ('serviceWorker' in navigator) {
+    /* ================= SERVICE WORKER (PER UID) ================= */
+    if ('serviceWorker' in navigator && uid) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(reg => console.log('Service Worker registered', reg))
-          .catch(err => console.error('SW registration failed', err));
+        navigator.serviceWorker.register('/sw.js?uid=' + uid, {
+          scope: '/app/' + uid + '/'
+        })
+        .then(reg => console.log('SW registered for UID:', uid))
+        .catch(err => console.error('SW failed:', err));
       });
     }
 
-    // LOAD SHOP INFO
+    /* ================= LOAD SHOP INFO ================= */
     const contentDiv = document.getElementById('content');
 
     if (!uid) {
-      contentDiv.innerHTML = "<p>No UID provided. Please open with your shop link.</p>";
+      contentDiv.innerHTML =
+        '<p>No UID provided. Please open using your shop link.</p>';
     } else {
-      const scriptURL = "https://script.google.com/macros/s/AKfycbx73jH0wY8nELaoKRPNvwNuGKdeSrUV9-PVdt_NU4uyLiNvtkWdExU7l6_oThZpD9dj/exec?uid=" + uid + "&json=1";
+      const scriptURL =
+        'https://script.google.com/macros/s/AKfycbx73jH0wY8nELaoKRPNvwNuGKdeSrUV9-PVdt_NU4uyLiNvtkWdExU7l6_oThZpD9dj/exec?uid=' +
+        uid +
+        '&json=1';
 
       fetch(scriptURL)
-        .then(response => response.json())
-        .then(data => {
+        .then((r) => r.json())
+        .then((data) => {
           if (!data.success) {
             contentDiv.innerHTML = `<p>${data.message}</p>`;
             return;
           }
 
           const s = data.shopInfo;
-          const phone = s.phone.toString().startsWith('0') ? s.phone : '0' + s.phone;
-          const whatsapp = s.whatsapp.toString().startsWith('0') ? s.whatsapp : '0' + s.whatsapp;
+          const phone = s.phone.startsWith('0') ? s.phone : '0' + s.phone;
+          const whatsapp = s.whatsapp.startsWith('0')
+            ? s.whatsapp
+            : '0' + s.whatsapp;
 
           contentDiv.innerHTML = `
-            <h1 style="color:green;">${s.shopName}</h1>
+            <h1 style="color:green">${s.shopName}</h1>
 
-            <a class="button" href="https://mysite.masomo.website?user=${s.userId}" target="_blank">VISIT MY WEBSITE</a>
-            <a class="button shop" href="https://myshops.masomo.website?uid=${s.userId}" target="_blank">VISIT MY ONLINE SHOP</a>
+            <a class="button" href="https://mysite.masomo.website?user=${s.userId}" target="_blank">
+              VISIT MY WEBSITE
+            </a>
+
+            <a class="button shop" href="https://myshops.masomo.website?uid=${s.userId}" target="_blank">
+              VISIT MY ONLINE SHOP
+            </a>
 
             <div class="details-section">
-              <h2>SHOP DETAILS</h2>
               <div class="detail-label">PHONE</div>
-              <div class="detail-value">${phone}</div>
-              
+              <div>${phone}</div>
+
               <div class="detail-label">WHATSAPP</div>
-              <div class="detail-value">${whatsapp}</div>
+              <div>${whatsapp}</div>
 
               <div class="detail-label">LOCATION</div>
-              <div class="detail-value">${s.location}</div>
+              <div>${s.location}</div>
 
               <div class="detail-label">ABOUT US</div>
-              <div class="detail-value">${s.description}</div>
+              <div>${s.description}</div>
             </div>
           `;
         })
-        .catch(err => {
-          console.error(err);
-          contentDiv.innerHTML = "<p>Error loading shop info.</p>";
+        .catch(() => {
+          contentDiv.innerHTML = '<p>Error loading shop info.</p>';
         });
     }
   </script>
 </body>
 </html>
-
-

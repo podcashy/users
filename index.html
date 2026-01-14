@@ -15,7 +15,7 @@
       const link = document.createElement('link');
       link.rel = 'manifest';
       // POINT TO NETLIFY FUNCTION SERVING DYNAMIC MANIFEST
-      link.href = '/.netlify/functions/manifest?uid=' + uid;
+      link.href = '/.netlify/functions/manifest?uid=' + uid + '&v=' + uid;
       document.head.appendChild(link);
     } else {
       // fallback to default manifest if no UID
@@ -203,4 +203,5 @@
   </script>
 </body>
 </html>
+
 

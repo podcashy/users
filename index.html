@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MyShop PWA</title>
 
   <!-- DYNAMIC MANIFEST -->
@@ -12,12 +12,13 @@
 
     if (uid) {
       localStorage.setItem('uid', uid);
-
       const link = document.createElement('link');
       link.rel = 'manifest';
+      // POINT TO NETLIFY FUNCTION SERVING DYNAMIC MANIFEST
       link.href = '/.netlify/functions/manifest?uid=' + uid;
       document.head.appendChild(link);
     } else {
+      // fallback to default manifest if no UID
       const link = document.createElement('link');
       link.rel = 'manifest';
       link.href = '/manifest.json';
@@ -25,85 +26,65 @@
     }
   </script>
 
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#000000">
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      background: #ffc0cb;
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 0; padding: 0; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: flex-start; 
+      min-height: 100vh; 
+      background: #FFC0CB; 
     }
-
-    header {
-      background: #007bff;
-      color: white;
-      width: 100%;
-      padding: 20px;
-      text-align: center;
+    header { 
+      background: #007bff; 
+      color: white; 
+      width: 100%; 
+      padding: 20px; 
+      text-align: center; 
       position: relative;
     }
-
     #installBtn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      padding: 10px 15px;
-      background: black;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+      position: absolute; 
+      top: 20px; 
+      right: 20px; 
+      padding: 10px 15px; 
+      background: black; 
+      color: white; 
+      border: none; 
+      border-radius: 5px; 
+      cursor: pointer; 
       display: none;
     }
-
-    .container {
-      padding: 20px;
-      width: 100%;
-      max-width: 500px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    .container { 
+      padding: 20px; 
+      width: 100%; 
+      max-width: 500px; 
+      text-align: center; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
     }
+    h1 { font-size: 1.5em; margin-bottom: 10px; }
+    .shop-image { max-width: 100%; height: auto; margin: 15px 0; border-radius: 10px; }
 
-    h1 {
-      font-size: 1.5em;
-      margin-bottom: 10px;
-    }
-
-    .shop-image {
-      max-width: 100%;
-      height: auto;
-      margin: 15px 0;
-      border-radius: 10px;
-    }
-
-    .button {
-      display: inline-block;
-      padding: 12px 25px;
-      font-size: 1em;
-      text-decoration: none;
-      color: white;
-      background-color: #28a745;
-      border-radius: 25px;
-      margin: 10px;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    .button { 
+      display: inline-block; 
+      padding: 12px 25px; 
+      font-size: 1em; 
+      text-decoration: none; 
+      color: white; 
+      background-color: #28a745; 
+      border-radius: 25px; 
+      margin: 10px; 
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
       transition: transform 0.1s;
     }
-
-    .button:hover {
-      transform: scale(1.05);
-    }
-
-    .button.shop {
-      background-color: #17a2b8;
-    }
+    .button:hover { transform: scale(1.05); }
+    .button.shop { background-color: #17a2b8; }
 
     .details-section {
       text-align: center;
@@ -111,133 +92,98 @@
       background: #fff;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       width: 100%;
     }
-
-    .details-section h2 {
-      margin-bottom: 15px;
-      color: #007bff;
+    .details-section h2 { 
+      margin-bottom: 15px; 
+      color: #007bff; 
     }
-
-    .detail-label {
-      font-weight: bold;
-      margin-top: 10px;
+    .detail-label { 
+      font-weight: bold; 
+      margin-top: 10px; 
       color: green;
     }
-
-    .detail-value {
-      margin-bottom: 10px;
+    .detail-value { 
+      margin-bottom: 10px; 
     }
 
-    .loading {
-      font-size: 1.2em;
-      color: #555;
-      margin-top: 30px;
-    }
+    .loading { font-size: 1.2em; color: #555; margin-top: 30px; }
   </style>
 </head>
-
 <body>
   <header>
     <h1>MyShop App</h1>
     <button id="installBtn">Install App</button>
   </header>
 
-  <img
-    src="https://i.imgur.com/SIbDh5A.png"
-    alt="MyShop Logo"
-    class="shop-image"
-  />
+  <img src="https://i.imgur.com/SIbDh5A.png" alt="MyShop Logo" class="shop-image">
 
   <div class="container" id="content">
     <p class="loading">Loading shop info...</p>
   </div>
 
   <script>
-    /* ---------------- INSTALL BUTTON LOGIC ---------------- */
+    // INSTALL BUTTON LOGIC
     const installBtn = document.getElementById('installBtn');
-    let deferredPrompt = null;
-
+    let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
       installBtn.style.display = 'block';
     });
-
     installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      installBtn.style.display = 'none';
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+      }
     });
-
     window.addEventListener('appinstalled', () => {
       installBtn.style.display = 'none';
     });
 
-    /* ---------------- SERVICE WORKER (UID SCOPED) ---------------- */
-    if ('serviceWorker' in navigator && uid) {
+    // SERVICE WORKER REGISTRATION
+    if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker
-          .register('/sw.js', {
-            scope: `/app/${uid}/`
-          })
-          .then((reg) =>
-            console.log('Service Worker registered with scope:', reg.scope)
-          )
-          .catch((err) =>
-            console.error('Service Worker registration failed:', err)
-          );
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('Service Worker registered', reg))
+          .catch(err => console.error('SW registration failed', err));
       });
     }
 
-    /* ---------------- LOAD SHOP INFO ---------------- */
+    // LOAD SHOP INFO
     const contentDiv = document.getElementById('content');
 
     if (!uid) {
-      contentDiv.innerHTML =
-        '<p>No UID provided. Please open with your shop link.</p>';
+      contentDiv.innerHTML = "<p>No UID provided. Please open with your shop link.</p>";
     } else {
-      const scriptURL =
-        'https://script.google.com/macros/s/AKfycbx73jH0wY8nELaoKRPNvwNuGKdeSrUV9-PVdt_NU4uyLiNvtkWdExU7l6_oThZpD9dj/exec?uid=' +
-        uid +
-        '&json=1';
+      const scriptURL = "https://script.google.com/macros/s/AKfycbx73jH0wY8nELaoKRPNvwNuGKdeSrUV9-PVdt_NU4uyLiNvtkWdExU7l6_oThZpD9dj/exec?uid=" + uid + "&json=1";
 
       fetch(scriptURL)
-        .then((response) => response.json())
-        .then((data) => {
+        .then(response => response.json())
+        .then(data => {
           if (!data.success) {
             contentDiv.innerHTML = `<p>${data.message}</p>`;
             return;
           }
 
           const s = data.shopInfo;
-          const phone = s.phone.toString().startsWith('0')
-            ? s.phone
-            : '0' + s.phone;
-          const whatsapp = s.whatsapp.toString().startsWith('0')
-            ? s.whatsapp
-            : '0' + s.whatsapp;
+          const phone = s.phone.toString().startsWith('0') ? s.phone : '0' + s.phone;
+          const whatsapp = s.whatsapp.toString().startsWith('0') ? s.whatsapp : '0' + s.whatsapp;
 
           contentDiv.innerHTML = `
             <h1 style="color:green;">${s.shopName}</h1>
 
-            <a class="button" href="https://mysite.masomo.website?user=${s.userId}" target="_blank">
-              VISIT MY WEBSITE
-            </a>
-
-            <a class="button shop" href="https://myshops.masomo.website?uid=${s.userId}" target="_blank">
-              VISIT MY ONLINE SHOP
-            </a>
+            <a class="button" href="https://mysite.masomo.website?user=${s.userId}" target="_blank">VISIT MY WEBSITE</a>
+            <a class="button shop" href="https://myshops.masomo.website?uid=${s.userId}" target="_blank">VISIT MY ONLINE SHOP</a>
 
             <div class="details-section">
               <h2>SHOP DETAILS</h2>
-
               <div class="detail-label">PHONE</div>
               <div class="detail-value">${phone}</div>
-
+              
               <div class="detail-label">WHATSAPP</div>
               <div class="detail-value">${whatsapp}</div>
 
@@ -249,9 +195,9 @@
             </div>
           `;
         })
-        .catch((err) => {
+        .catch(err => {
           console.error(err);
-          contentDiv.innerHTML = '<p>Error loading shop info.</p>';
+          contentDiv.innerHTML = "<p>Error loading shop info.</p>";
         });
     }
   </script>

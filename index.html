@@ -151,12 +151,16 @@
       installBtn.style.display = 'none';
     });
 
-    // SERVICE WORKER REGISTRATION
+    // SERVICE WORKER REGISTRATION PER UID
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(reg => console.log('Service Worker registered', reg))
+        if (uid) {
+          navigator.serviceWorker.register(`/app/${uid}/sw.js`, {
+            scope: `/app/${uid}/`
+          })
+          .then(reg => console.log('Service Worker registered for UID', uid, reg))
           .catch(err => console.error('SW registration failed', err));
+        }
       });
     }
 
@@ -166,7 +170,7 @@
     if (!uid) {
       contentDiv.innerHTML = "<p>No UID provided. Please open with your shop link.</p>";
     } else {
-      // Save UID in localStorage (used by SW for cache)
+      // Save UID in localStorage
       localStorage.setItem('uid', uid);
 
       const scriptURL = "https://script.google.com/macros/s/AKfycbx73jH0wY8nELaoKRPNvwNuGKdeSrUV9-PVdt_NU4uyLiNvtkWdExU7l6_oThZpD9dj/exec?uid=" + uid + "&json=1";
@@ -213,5 +217,6 @@
   </script>
 </body>
 </html>
+
 
 

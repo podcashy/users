@@ -1,21 +1,30 @@
-// sw.js
-const CACHE_NAME = 'myshop-cache-v6';   // <-- Update this for every new release
+// Get UID from URL query string
+function getUid() {
+  try {
+    const urlParams = new URL(self.location.href).searchParams;
+    return urlParams.get('uid') || 'default';
+  } catch (e) {
+    return 'default';
+  }
+}
+
+const UID = getUid();
+const CACHE_NAME = `myshop-cache-${UID}-v1`; // UID-specific cache
 
 const urlsToCache = [
   './',
   './index.html',
-  './manifest.json',
   './icon-192x192.png',
   './icon-512x512.png',
+  // no static manifest, each PWA gets dynamic manifest via Netlify function
 ];
 
 /* ---------------------- INSTALL ---------------------- */
 self.addEventListener('install', (event) => {
-  self.skipWaiting(); // Force new service worker to activate immediately
-
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Caching new files');
+      console.log('[SW] Caching files for UID:', UID);
       return cache.addAll(urlsToCache);
     })
   );
@@ -35,20 +44,15 @@ self.addEventListener('activate', (event) => {
       )
     )
   );
-
-  clients.claim(); // Force all tabs/PWA windows to use the new service worker
+  clients.claim();
 });
 
 /* ---------------------- FETCH ---------------------- */
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cacheResponse) => {
-      return (
-        cacheResponse ||
-        fetch(event.request).then((networkResponse) => {
-          return networkResponse;
-        })
-      );
+      return cacheResponse || fetch(event.request);
     })
   );
 });
+

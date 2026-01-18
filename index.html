@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MyShop PWA</title>
-
   <meta name="theme-color" content="#000000">
 
   <!-- GLOBAL UID + DYNAMIC MANIFEST -->
@@ -12,9 +11,8 @@
     window.APP_UID = null;
 
     (function () {
-      const params = new URLSearchParams(window.location.search);
-      const uid = params.get('uid') || localStorage.getItem('uid');
-
+      const pathParts = window.location.pathname.split('/');
+      const uid = pathParts[2] || localStorage.getItem('uid'); // extract UID from /app/<UID>/
       if (uid) {
         localStorage.setItem('uid', uid);
         window.APP_UID = uid;
@@ -33,68 +31,15 @@
   </script>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      background: #ffc0cb;
-    }
-    header {
-      background: #007bff;
-      color: white;
-      width: 100%;
-      padding: 20px;
-      text-align: center;
-      position: relative;
-    }
-    #installBtn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      padding: 10px 15px;
-      background: black;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      display: none;
-    }
-    .container {
-      padding: 20px;
-      max-width: 500px;
-      text-align: center;
-    }
-    .shop-image {
-      max-width: 100%;
-      margin: 15px 0;
-      border-radius: 10px;
-    }
-    .button {
-      display: inline-block;
-      padding: 12px 25px;
-      color: white;
-      background: #28a745;
-      border-radius: 25px;
-      margin: 10px;
-      text-decoration: none;
-    }
-    .button.shop {
-      background: #17a2b8;
-    }
-    .details-section {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
-    }
-    .detail-label {
-      font-weight: bold;
-      color: green;
-    }
+    body { font-family: Arial; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background: #ffc0cb; }
+    header { background: #007bff; color: white; width: 100%; padding: 20px; text-align: center; position: relative; }
+    #installBtn { position: absolute; top: 20px; right: 20px; padding: 10px 15px; background: black; color: white; border: none; border-radius: 5px; cursor: pointer; display: none; }
+    .container { padding: 20px; max-width: 500px; text-align: center; }
+    .shop-image { max-width: 100%; margin: 15px 0; border-radius: 10px; }
+    .button { display: inline-block; padding: 12px 25px; color: white; background: #28a745; border-radius: 25px; margin: 10px; text-decoration: none; }
+    .button.shop { background: #17a2b8; }
+    .details-section { background: #fff; padding: 20px; border-radius: 10px; margin-top: 20px; }
+    .detail-label { font-weight: bold; color: green; }
   </style>
 </head>
 
@@ -111,7 +56,6 @@
   </div>
 
   <script>
-    /* INSTALL PROMPT */
     const installBtn = document.getElementById('installBtn');
     let deferredPrompt;
 
@@ -132,7 +76,7 @@
     /* SERVICE WORKER */
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js');
+        navigator.serviceWorker.register('/sw.js', { scope: `/app/${window.APP_UID}/` });
       });
     }
 
@@ -143,17 +87,10 @@
     if (!uid) {
       content.innerHTML = '<p>No UID provided.</p>';
     } else {
-      fetch(
-        'https://script.google.com/macros/s/AKfycbx73jH0wY8nELaoKRPNvwNuGKdeSrUV9-PVdt_NU4uyLiNvtkWdExU7l6_oThZpD9dj/exec?uid=' +
-          uid +
-          '&json=1'
-      )
+      fetch(`https://script.google.com/macros/s/AKfycbx73jH0wY8nELaoKRPNvwNuGKdeSrUV9-PVdt_NU4uyLiNvtkWdExU7l6_oThZpD9dj/exec?uid=${uid}&json=1`)
         .then((r) => r.json())
         .then((data) => {
-          if (!data.success) {
-            content.innerHTML = data.message;
-            return;
-          }
+          if (!data.success) { content.innerHTML = data.message; return; }
 
           const s = data.shopInfo;
           content.innerHTML = `
@@ -161,8 +98,8 @@
             <a class="button" href="https://mysite.masomo.website?user=${s.userId}" target="_blank">VISIT MY WEBSITE</a>
             <a class="button shop" href="https://myshops.masomo.website?uid=${s.userId}" target="_blank">VISIT MY ONLINE SHOP</a>
             <div class="details-section">
-            <div class="detail-label">PHONE</div>0${s.phone.toString().padStart(8, '0')}
-<div class="detail-label">WHATSAPP</div>0${s.whatsapp.toString().padStart(8, '0')}
+              <div class="detail-label">PHONE</div>0${s.phone.toString().padStart(8, '0')}
+              <div class="detail-label">WHATSAPP</div>0${s.whatsapp.toString().padStart(8, '0')}
               <div class="detail-label">LOCATION</div>${s.location}
               <div class="detail-label">ABOUT</div>${s.description}
             </div>

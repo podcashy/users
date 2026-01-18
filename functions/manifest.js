@@ -16,13 +16,14 @@ export async function handler(event) {
     // Process short_name
     let firstWord = shopName.split(' ')[0]; // take first word
     let shortName = firstWord.charAt(0).toUpperCase() + firstWord.slice(1).toLowerCase(); // capitalize first letter
-    if (shortName.length > 12) shortName = shortName.substring(0, 12);
+    if (shortName.length > 12) {
+      shortName = shortName.substring(0, 12); // max 12 chars
+    }
 
     const manifest = {
-      name: `MASOMO SHOP ${shopName}`,  // Keep exactly as currently installing
+      name: `MASOMO SHOP ${shopName}`,
       short_name: shortName,
-      start_url: `/app/${uid}/`,         // Unique start_url for each UID
-      scope: `/app/${uid}/`,             // Unique scope for multiple PWAs
+      start_url: `/?uid=${uid}`,
       display: "standalone",
       background_color: "#ffffff",
       theme_color: "#000000",
@@ -43,6 +44,7 @@ export async function handler(event) {
 
   } catch (err) {
     console.error(err);
+    // fallback manifest
     return {
       statusCode: 200,
       headers: {
@@ -53,7 +55,6 @@ export async function handler(event) {
         name: `MASOMO SHOP`,
         short_name: `MyShop`,
         start_url: "/",
-        scope: "/",
         display: "standalone",
         background_color: "#ffffff",
         theme_color: "#000000",

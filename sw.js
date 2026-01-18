@@ -1,3 +1,4 @@
+/* ===================== UID FROM SCOPE ===================== */
 function getUidFromScope() {
   const scope = self.registration.scope;
   const match = scope.match(/\/app\/([^/]+)\//);
@@ -7,6 +8,7 @@ function getUidFromScope() {
 const UID = getUidFromScope();
 const CACHE_NAME = `myshop-cache-${UID}-v1`;
 
+/* ===================== FILES TO CACHE ===================== */
 const urlsToCache = [
   `/app/${UID}/`,
   `/app/${UID}/index.html`,
@@ -14,6 +16,7 @@ const urlsToCache = [
   `/icon-512x512.png`
 ];
 
+/* ===================== INSTALL ===================== */
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
@@ -24,11 +27,13 @@ self.addEventListener('install', (event) => {
   );
 });
 
+/* ===================== ACTIVATE ===================== */
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) =>
       Promise.all(
         cacheNames.map((cache) => {
+          // keep other UID caches intact
           if (!cache.startsWith(`myshop-cache-${UID}-`)) return;
           return Promise.resolve();
         })
@@ -38,6 +43,7 @@ self.addEventListener('activate', (event) => {
   clients.claim();
 });
 
+/* ===================== FETCH ===================== */
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   if (!url.pathname.startsWith(`/app/${UID}/`)) return;
@@ -46,5 +52,6 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
 });
+
 
 

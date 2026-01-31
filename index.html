@@ -85,6 +85,9 @@
     .button.shop {
       background: #17a2b8;
     }
+    .button.album {
+      background: #8b5cf6; /* purple for album */
+    }
     .details-section {
       background: #fff;
       padding: 20px;
@@ -94,6 +97,7 @@
     .detail-label {
       font-weight: bold;
       color: green;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -156,15 +160,43 @@
           }
 
           const s = data.shopInfo;
+
           content.innerHTML = `
             <h2 style="color:green">${s.shopName}</h2>
-            <a class="button" href="https://mysite.masomo.website?user=${s.userId}" target="_blank">VISIT MY WEBSITE</a>
-            <a class="button shop" href="https://myshops.masomo.website?uid=${s.userId}" target="_blank">VISIT MY ONLINE SHOP</a>
+
+            <a class="button" 
+               href="https://mysite.masomo.website?user=${s.userId}" 
+               target="_blank" 
+               rel="noopener">
+               VISIT MY WEBSITE
+            </a>
+
+            <a class="button shop" 
+               href="https://myshops.masomo.website?uid=${s.userId}" 
+               target="_blank" 
+               rel="noopener">
+               VISIT MY ONLINE SHOP
+            </a>
+
+            <a class="button album"
+               href="https://album.masomo.website?nid=${s.userId}"
+               target="_blank"
+               rel="noopener">
+               VIEW MY PHOTO ALBUM
+            </a>
+
             <div class="details-section">
-            <div class="detail-label">PHONE</div>0${s.phone.toString().padStart(8, '0')}
-<div class="detail-label">WHATSAPP</div>0${s.whatsapp.toString().padStart(8, '0')}
-              <div class="detail-label">LOCATION</div>${s.location}
-              <div class="detail-label">ABOUT</div>${s.description}
+              <div class="detail-label">PHONE</div>
+              0${s.phone.toString().padStart(8, '0')}
+
+              <div class="detail-label">WHATSAPP</div>
+              0${s.whatsapp.toString().padStart(8, '0')}
+
+              <div class="detail-label">LOCATION</div>
+              ${s.location}
+
+              <div class="detail-label">ABOUT</div>
+              ${s.description}
             </div>
           `;
         });

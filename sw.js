@@ -46,24 +46,11 @@ self.addEventListener('activate', (event) => {
 /* ===================== FETCH ===================== */
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
-
-  // Only handle requests inside this UID app scope
   if (!url.pathname.startsWith(`/app/${UID}/`)) return;
 
-  // ALWAYS fetch fresh HTML (important for UI updates)
-  if (
-    url.pathname === `/app/${UID}/` ||
-    url.pathname.endsWith('/index.html')
-  ) {
-    event.respondWith(fetch(event.request));
-    return;
-  }
-
-  // Cache-first for everything else (icons, images, etc.)
   event.respondWith(
-    caches.match(event.request).then(
-      (cached) => cached || fetch(event.request)
-    )
+    caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
 });
+
 
